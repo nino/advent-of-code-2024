@@ -31,10 +31,8 @@
                           (matref matrix (first coord) (second coord))))
           'string))
 
-(get-string (coerce '("xmas" "1234" "samx") 'vector) '(0 0) '(1 0) 4)
-
 (defun part1 (input)
-  (let ((prepped  (prep input)))
+  (let ((prepped (prep input)))
     (loop for dir in '((-1 -1) (-1 0) (-1 1) (0 -1 ) (0 1) (1 -1) (1 0) (1 1))
           sum (loop for row below (length prepped)
                     sum (loop for col below (length (aref prepped 0))
@@ -46,4 +44,22 @@
 
 (part1 (uiop:read-file-lines "day4-input.txt"))
 
+(defun get-x (matrix row col)
+  (list (get-string matrix (list (1- row) (1- col)) '(1 1) 3)
+        (get-string matrix (list (1+ row) (1- col)) '(-1 1) 3)))
 
+(defun is-xmas-x (matrix row col)
+  (let ((x (get-x matrix row col)))
+    (and (or (equal (first x) "MAS")
+             (equal (first x) "SAM"))
+         (or (equal (second x) "MAS")
+             (equal (second x) "SAM")))))
+
+(defun part2 (input)
+  (let ((prepped (prep input)))
+    (loop for row from 1 below (1- (length prepped))
+          sum (loop for col from 1 below (1- (length (aref prepped 0)))
+                    count (is-xmas-x prepped row col)))))
+
+
+(part2 (uiop:read-file-lines "day4-input.txt"))
